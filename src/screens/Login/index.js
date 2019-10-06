@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, TextInput, StyleSheet, Image, Text, AsyncStorage, ActivityIndicator } from 'react-native'
+import { KeyboardAvoidingView, Platform, View, TextInput, StyleSheet, Image, Text, AsyncStorage, ActivityIndicator } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import api from './../../services/api'
 
@@ -25,7 +25,7 @@ const _Login = ({ navigation }) => {
     }
 
     return (
-        <View style={Styles.container}>
+        <KeyboardAvoidingView enabled={Platform.OS === 'ios'} behavior="padding" style={Styles.container}>
             <View style={Styles.form}>
                 <Image style={Styles.logo} resizeMode={'contain'} source={require('./../../../assets/logo.png')} />
                 <TextInput
@@ -55,7 +55,7 @@ const _Login = ({ navigation }) => {
                     </View>
                 </TouchableOpacity>
             </View>
-        </View>
+        </KeyboardAvoidingView>
     )
 }
 

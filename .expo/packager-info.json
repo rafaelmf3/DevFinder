@@ -1,11 +1,9 @@
 {
   "devToolsPort": 19002,
-  "expoServerPort": 19000,
-  "packagerPort": 19001,
-
-  "packagerPid": 23482,
-  "expoServerNgrokUrl": "https://n7-suw.anonymous.devfinder.exp.direct",
-  "packagerNgrokUrl": "https://packager.n7-suw.anonymous.devfinder.exp.direct",
-  "ngrokPid": 23513
+  "expoServerPort": null,
+  "packagerPort": null,
+  "packagerPid": null,
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null
 }
-
