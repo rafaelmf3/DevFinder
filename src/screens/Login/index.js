@@ -44,8 +44,16 @@ const _Login = ({ navigation }) => {
 
     const handleLogin = () => {
         setLoading(true)
-        api.get(`users/${username}`)
-            .then(({ data }) => {
+
+        let b = new buffer.Buffer(username + ':' + password);
+        let encondedAuth = b.toString('base64');
+        setLoading(true)
+        api.get('/user', {
+          headers: {
+            'Authorization' : 'Basic ' + encondedAuth
+          }
+        })
+          .then(({ data }) => {
                 const user = data
                 AsyncStorage.setItem('user', JSON.stringify(user)).then(() => {
                     navigation.setParams({ user: user })
