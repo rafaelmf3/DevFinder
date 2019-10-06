@@ -3,6 +3,7 @@ import { View, TextInput, StyleSheet, Image, Text, AsyncStorage, ActivityIndicat
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
+import buffer from 'buffer';
 
 import api from './../../services/api'
 
