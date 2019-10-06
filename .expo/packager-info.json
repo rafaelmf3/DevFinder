@@ -2,9 +2,10 @@
   "devToolsPort": 19002,
   "expoServerPort": 19000,
   "packagerPort": 19001,
-  "packagerPid": 11677,
-  "expoServerNgrokUrl": "https://q4-cag.fifite.devfinder.exp.direct",
-  "packagerNgrokUrl": "https://packager.q4-cag.fifite.devfinder.exp.direct",
-  "ngrokPid": 12946
+
+  "packagerPid": 23482,
+  "expoServerNgrokUrl": "https://n7-suw.anonymous.devfinder.exp.direct",
+  "packagerNgrokUrl": "https://packager.n7-suw.anonymous.devfinder.exp.direct",
+  "ngrokPid": 23513
 }
 
