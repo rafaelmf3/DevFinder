@@ -1,28 +1,57 @@
-import React from 'react'
-import { View, TextInput, StyleSheet, Image, Text } from 'react-native'
+import React, { useState } from 'react'
+import { View, TextInput, StyleSheet, Image, Text, AsyncStorage, ActivityIndicator } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+import api from './../../services/api'
 
 const _Login = ({ navigation }) => {
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const [loading, setLoading] = useState(false)
+
+    const canLogin = username.length > 0 && !loading
+    const handleLogin = () => {
+        setLoading(true)
+        api.get(`users/${username}`)
+            .then(({ data }) => {
+                const user = data
+                AsyncStorage.setItem('user', JSON.stringify(user)).then(() => {
+                    navigation.setParams({ user: user })
+                    navigation.navigate('DevsList', { user })
+                })
+            })
+            .finally(() => {
+                setLoading(false)
+            })
+    }
 
     return (
         <View style={Styles.container}>
             <View style={Styles.form}>
-                <Image style={{ width: '100%', height: 200 }} resizeMode={'contain'} source={require('./../../../assets/logo.png')} />
+                <Image style={Styles.logo} resizeMode={'contain'} source={require('./../../../assets/logo.png')} />
                 <TextInput
                     placeholder="Enter GitHub email or username"
                     style={Styles.textInput}
+                    value={username}
+                    onChangeText={setUsername}
                 />
                 <TextInput
                     placeholder="Enter password"
                     style={Styles.textInput}
+                    value={password}
+                    onChangeText={setPassword}
                 />
                 <TouchableOpacity
-                    onPress={() => console.warn('apertou')}
-                    disabled={{}}>
+                    onPress={handleLogin}
+                    disabled={!canLogin}>
                     <View
-                        style={Styles.button}
+                        style={[Styles.button, canLogin ? {} : { backgroundColor: '#ADD8E6' }]}
                     >
-                        <Text style={Styles.textButton}>Login</Text>
+                        {
+                            loading ?
+                                <ActivityIndicator />
+                                :
+                                <Text style={Styles.textButton}>Login</Text>
+                        }
                     </View>
                 </TouchableOpacity>
             </View>
@@ -43,6 +72,10 @@ const Styles = StyleSheet.create({
     },
     form: {
         paddingHorizontal: 30
+    },
+    logo: {
+        width: '100%',
+        height: 200
     },
     textInput: {
         backgroundColor: 'white',
