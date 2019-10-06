@@ -1,14 +1,47 @@
-import React, { useState } from 'react'
-import { View, TextInput, StyleSheet, Image, Text, AsyncStorage, ActivityIndicator } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import React, { useState, useEffect } from 'react'
+import { View, TextInput, StyleSheet, Image, Text, AsyncStorage, ActivityIndicator, TouchableOpacity, Platform, Alert } from 'react-native'
+import * as Location from 'expo-location';
+import * as Permissions from 'expo-permissions';
+import Constants from 'expo-constants';
+
 import api from './../../services/api'
 
 const _Login = ({ navigation }) => {
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
-    const [loading, setLoading] = useState(false)
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [geoLocation, setGeoLocation] = useState({
+      latitude: null,
+      longitude: null
+    });
+    const [city, setCity] = useState('');
 
     const canLogin = username.length > 0 && !loading
+
+    useEffect(() => {
+      if (Platform.OS === 'android' && !Constants.isDevice) {
+        Alert.alert('Oops, this will not work on Sketch in an Android emulator. Try it on your device!');
+      } else {
+        _getLocationAsync();
+      }
+    }, []);
+
+    _getLocationAsync = async () => {
+      let { status } = await Permissions.askAsync(Permissions.LOCATION);
+      if (status !== 'granted') {
+        Alert.alert("Permission to access location was denied");
+      }
+
+      let {coords: {latitude, longitude} } = await Location.getCurrentPositionAsync({});
+      setGeoLocation({latitude, longitude});
+    }
+
+    useEffect(() => {
+      Location.reverseGeocodeAsync(geoLocation).then(response => {
+        setCity(response[0].city);
+      });
+    }, [geoLocation]);
+
     const handleLogin = () => {
         setLoading(true)
         api.get(`users/${username}`)
@@ -16,7 +49,7 @@ const _Login = ({ navigation }) => {
                 const user = data
                 AsyncStorage.setItem('user', JSON.stringify(user)).then(() => {
                     navigation.setParams({ user: user })
-                    navigation.navigate('DevsList', { user })
+                    navigation.navigate('DevsList', { user, city })
                 })
             })
             .finally(() => {
