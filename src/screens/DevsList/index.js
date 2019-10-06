@@ -1,6 +1,6 @@
 import React from 'react'
 import { View } from 'react-native'
 
-export const DevsList = () => {
-    return <View style={{backgroundColor: 'blue', flex: 1}}/>
+export const DevsList = ({navigation}) => {
+    return <View style={{backgroundColor: '#191970' , flex: 1}}/>
 }
