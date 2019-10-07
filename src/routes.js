@@ -1,5 +1,4 @@
 import React from 'react';
-import { View, Text, AsyncStorage } from 'react-native';
 import * as screens from './screens';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
