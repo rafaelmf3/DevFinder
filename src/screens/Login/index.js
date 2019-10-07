@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react'
-import { View, TextInput, StyleSheet, Image, Text, AsyncStorage, ActivityIndicator, TouchableOpacity, Platform, Alert } from 'react-native'
+import { KeyboardAvoidingView, Platform, View, TextInput, StyleSheet, Image, Text, AsyncStorage, ActivityIndicator } from 'react-native'
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
@@ -67,7 +68,7 @@ const _Login = ({ navigation }) => {
     }
 
     return (
-        <View style={Styles.container}>
+        <KeyboardAvoidingView enabled={Platform.OS === 'ios'} behavior="padding" style={Styles.container}>
             <View style={Styles.form}>
                 <Image style={Styles.logo} resizeMode={'contain'} source={require('./../../../assets/logo.png')} />
                 <TextInput
@@ -97,7 +98,7 @@ const _Login = ({ navigation }) => {
                     </View>
                 </TouchableOpacity>
             </View>
-        </View>
+        </KeyboardAvoidingView>
     )
 }
 
