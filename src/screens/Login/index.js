@@ -37,7 +37,18 @@ const _Login = ({ navigation }) => {
       } else {
         _getLocationAsync();
       }
+      _checkLogin();
     }, []);
+
+    _checkLogin = async () => {
+      AsyncStorage.getItem('user').then(user => {
+        if(user){
+          user = JSON.parse(user)
+          navigation.setParams({ user: user })
+          navigation.navigate('DevsList', { user, city })
+        }
+      })
+    }
 
     _getLocationAsync = async () => {
       let { status } = await Permissions.askAsync(Permissions.LOCATION);
