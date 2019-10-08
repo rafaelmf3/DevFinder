@@ -49,7 +49,7 @@ export default Profile = (props: ProfileProps) => {
                 <View style={Styles.profileFooter}>
                     <Text style={Styles.text}>{email}</Text>
                     <Text style={Styles.text}>http://github.com/{username}</Text>
-                    <Text style={Styles.text}>Bio: {bio}</Text>
+                    <Text numberOfLines={2} style={Styles.text}>Bio: {bio}</Text>
                 </View>
             </View>
             <View style={Styles.line} />
