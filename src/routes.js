@@ -10,8 +10,6 @@ const AppNavigator = createStackNavigator({
     defaultNavigationOptions: ({ navigation }) => {
         const user = navigation.getParam('user')
         const city = navigation.getParam('city');
-        console.log(city);
-        console.log(user)
         if (!user)
             return {
                 header: null
