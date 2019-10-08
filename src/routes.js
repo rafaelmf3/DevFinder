@@ -1,5 +1,4 @@
 import React from 'react';
-import { View, Text, AsyncStorage } from 'react-native';
 import * as screens from './screens';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
@@ -11,8 +10,6 @@ const AppNavigator = createStackNavigator({
     defaultNavigationOptions: ({ navigation }) => {
         const user = navigation.getParam('user')
         const city = navigation.getParam('city');
-        console.log(city);
-        console.log(user)
         if (!user)
             return {
                 header: null

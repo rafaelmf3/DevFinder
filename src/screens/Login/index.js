@@ -1,6 +1,17 @@
 
 import React, { useState, useEffect } from 'react'
-import { KeyboardAvoidingView, Platform, View, TextInput, StyleSheet, Image, Text, AsyncStorage, ActivityIndicator } from 'react-native'
+import { KeyboardAvoidingView, 
+  Platform, 
+  View, 
+  TextInput, 
+  StyleSheet, 
+  Image, 
+  Text, 
+  AsyncStorage, 
+  ActivityIndicator, 
+  TouchableOpacity, 
+  Alert 
+} from 'react-native'
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
@@ -26,7 +37,18 @@ const _Login = ({ navigation }) => {
       } else {
         _getLocationAsync();
       }
+      _checkLogin();
     }, []);
+
+    _checkLogin = async () => {
+      AsyncStorage.getItem('user').then(user => {
+        if(user){
+          user = JSON.parse(user)
+          navigation.setParams({ user: user })
+          navigation.navigate('DevsList', { user, city })
+        }
+      })
+    }
 
     _getLocationAsync = async () => {
       let { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -62,6 +84,9 @@ const _Login = ({ navigation }) => {
                     navigation.navigate('DevsList', { user, city })
                 })
             })
+            .catch((error) => {
+              Alert.alert('Não foi possível efetuar login! Tente novamente!');
+            })
             .finally(() => {
                 setLoading(false)
             })
@@ -81,6 +106,7 @@ const _Login = ({ navigation }) => {
                     placeholder="Enter password"
                     style={Styles.textInput}
                     value={password}
+                    secureTextEntry
                     onChangeText={setPassword}
                 />
                 <TouchableOpacity
