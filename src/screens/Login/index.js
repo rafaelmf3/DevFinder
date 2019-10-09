@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react'
 import {
   KeyboardAvoidingView,
@@ -25,8 +24,8 @@ const _Login = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [geoLocation, setGeoLocation] = useState({
-    latitude: null,
-    longitude: null
+    latitude: 0,
+    longitude: 0
   });
   const [city, setCity] = useState('');
 
@@ -41,7 +40,7 @@ const _Login = ({ navigation }) => {
     _checkLogin();
   }, []);
 
-  _checkLogin = async () => {
+  _checkLogin = () => {
     AsyncStorage.getItem('user').then(user => {
       if (user) {
         user = JSON.parse(user)
@@ -119,7 +118,7 @@ const _Login = ({ navigation }) => {
           onPress={handleLogin}
           disabled={!canLogin}>
           <View
-            style={[Styles.button, canLogin ? {} : { backgroundColor: '#ADD8E6' }]}
+            style={[Styles.button, canLogin ? {} : { backgroundColor: '#35B' }]}
           >
             {
               loading ?
