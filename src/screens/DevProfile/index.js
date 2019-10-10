@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, RefreshControl, Text } from 'react-native'
+import { View, FlatList, RefreshControl, Text, AsyncStorage } from 'react-native'
 import Profile from '../../Components/Profile'
 import Repository from '../../Components/Repository'
 import api from '../../services/api'
 
-export const DevProfile = ({ navigation }) => {
+export default DevProfile = ({ navigation}) => {
     const [repos, setRepos] = useState([])
     const [loading, setLoading] = useState(false)
 
-    const user = navigation.getParam('user')
-
+    // console.log('teste', navigation.state);
+    const user = navigation.getParam('dev')
+    // console.log(user);
     const _getRepositories = () => {
         setLoading(true)
         api.get(`/users/${user.login}/repos`)
@@ -24,7 +25,15 @@ export const DevProfile = ({ navigation }) => {
 
     useEffect(() => {
         _getRepositories()
-    }, [])
+    }, []);
+
+    function storeFavorites() {
+
+      var favorites = AsyncStorage.getItem('favorites');
+      console.log(favorites);
+      AsyncStorage.setItem('favorites', favorites += JSON.stringify(user.login));
+
+    }
 
     const renderRepository = ({ item }) => {
         return (
@@ -46,6 +55,7 @@ export const DevProfile = ({ navigation }) => {
                 username={user.login}
                 email={user.email}
                 bio={user.bio}
+                onPressFavorite={() => storeFavorites}
             />
 
         )
@@ -54,13 +64,16 @@ export const DevProfile = ({ navigation }) => {
     return (
         <View style={{ backgroundColor: '#191970', flex: 1 }}>
             <View>
-                <FlatList
+              {renderProfile()}
+              <FlatList
                     data={repos}
-                    ListHeaderComponent={renderProfile}
+                    keyExtractor={item => item.node_id}
+                    // ListHeaderComponent={renderProfile}
                     renderItem={renderRepository}
                     //ListEmptyComponent={<Text>Não encontramos nenhum repositório!</Text>}
                     refreshControl={
                         <RefreshControl
+
                             refreshing={loading}
                             onRefresh={_getRepositories}
                         />
