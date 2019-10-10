@@ -12,9 +12,7 @@ import {
   TouchableOpacity,
   Alert
 } from 'react-native'
-import * as Location from 'expo-location';
-import * as Permissions from 'expo-permissions';
-import Constants from 'expo-constants';
+
 import buffer from 'buffer';
 
 import api from './../../services/api'
@@ -23,48 +21,26 @@ const _Login = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [geoLocation, setGeoLocation] = useState({
-    latitude: 0,
-    longitude: 0
-  });
-  const [city, setCity] = useState('');
 
   const canLogin = username.length > 0 && !loading
 
   useEffect(() => {
-    if (Platform.OS === 'android' && !Constants.isDevice) {
-      Alert.alert('Oops, this will not work on Sketch in an Android emulator. Try it on your device!');
-    } else {
-      _getLocationAsync();
-    }
+
     _checkLogin();
   }, []);
 
   _checkLogin = () => {
+
     AsyncStorage.getItem('user').then(user => {
       if (user) {
-        user = JSON.parse(user)
-        navigation.setParams({ user: user })
-        navigation.navigate('DevsList', { user, city })
+        user = JSON.parse(user);
+        // console.log(user.location);
+        // setCity(user.location);
+
+        navigation.navigate('DevsList', { user, city: user.location });
       }
     })
   }
-
-  _getLocationAsync = async () => {
-    let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status !== 'granted') {
-      Alert.alert("Permission to access location was denied");
-    }
-
-    let { coords: { latitude, longitude } } = await Location.getCurrentPositionAsync({});
-    setGeoLocation({ latitude, longitude });
-  }
-
-  useEffect(() => {
-    Location.reverseGeocodeAsync(geoLocation).then(response => {
-      setCity(response[0].city);
-    });
-  }, [geoLocation]);
 
   const handleLogin = () => {
     setLoading(true)
@@ -81,7 +57,7 @@ const _Login = ({ navigation }) => {
         const user = data
         AsyncStorage.setItem('user', JSON.stringify(user)).then(() => {
           navigation.setParams({ user: user })
-          navigation.navigate('DevsList', { user, city })
+          navigation.navigate('DevsList', { user });
         })
       })
       .catch((error) => {
@@ -173,4 +149,4 @@ const Styles = StyleSheet.create({
 })
 
 
-export const Login = _Login
+export default Login = _Login;

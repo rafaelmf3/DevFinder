@@ -31,6 +31,10 @@ export default Profile = (props: ProfileProps) => {
             <View style={Styles.line} />
             <View style={Styles.container}>
                 <View style={Styles.containerInitProfile}>
+{/* //o estado da estrela, depende do que esta no async storage, tem que fazer uma busca do login do Dev no array Favorites
+
+// Ao clicar na estrela vazia, deve-se incluir o login do usuário do array de Favorites
+// Ao clicar na estrela colorida, deve-se retirar o login do usuário do array de Favorites */}
                     <StarButton
                         status={favoriteStatus}
                         onPress={() => setFavoriteStatus(!favoriteStatus)}
