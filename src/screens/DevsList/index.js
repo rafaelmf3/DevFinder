@@ -37,10 +37,14 @@ export default DevsList = ({ navigation }) => {
         params: {
           q: `location:${city}`,
         },
-        headers: {
-          Accept: 'application/vnd.github.mercy-preview+json'
-        }
+        // headers: {
+        //   Accept: 'application/vnd.github.mercy-preview+json'
+        // }
       });
+
+      if (response.data.items == []) {
+        Alert.alert('Não encontrou nenhum dev');
+      }
       setDevs(response.data.items);
       setLoading(false);
     }
