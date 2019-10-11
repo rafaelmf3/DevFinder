@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, FlatList, ActivityIndicator, Platform } from 'react-native'
+import { View, Text, FlatList, ActivityIndicator, Platform, Alert } from 'react-native'
 
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
@@ -32,6 +32,7 @@ export default DevsList = ({ navigation }) => {
   }, [city]);
 
   async function loadDevs() {
+
     if (city) {
       const response = await api.get('/search/users', {
         params: {
@@ -46,7 +47,10 @@ export default DevsList = ({ navigation }) => {
         Alert.alert('Não encontrou nenhum dev');
       }
       setDevs(response.data.items);
+
       setLoading(false);
+    } else {
+      setCity(navigation.getParam('city'));
     }
   }
 
@@ -62,8 +66,12 @@ export default DevsList = ({ navigation }) => {
 
   useEffect(() => {
     Location.reverseGeocodeAsync(geoLocation).then(response => {
-      setCity(response[0].city);
-      navigation.setParams({city: response[0].city});
+      if (response[0].city !== null) {
+        setCity(response[0].city);
+        //console.log(response[0].city)
+        navigation.setParams({ city: response[0].city });
+      }
+
     });
   }, [geoLocation]);
 
@@ -76,7 +84,7 @@ export default DevsList = ({ navigation }) => {
             data={devs}
             keyExtractor={item => String(item.login)}
             renderItem={({ item }) => (
-              <Dev dev={item} user={navigation.getParam('user')} city={city}/>
+              <Dev dev={item} user={navigation.getParam('user')} city={city} />
             )}
           />
 
