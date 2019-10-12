@@ -10,13 +10,10 @@ import api from '../../services/api';
 import Dev from '../../Components/Dev';
 
 export default DevsList = ({ navigation }) => {
-  const [city, setCity] = useState('');
+  const [city, setCity] = useState();
   const [loading, setLoading] = useState(false);
   const [devs, setDevs] = useState([]);
-  const [geoLocation, setGeoLocation] = useState({
-    latitude: 0,
-    longitude: 0
-  });
+  const [geoLocation, setGeoLocation] = useState();
 
   useEffect(() => {
     if (Platform.OS === 'android' && !Constants.isDevice) {
@@ -28,15 +25,19 @@ export default DevsList = ({ navigation }) => {
 
   useEffect(() => {
     setLoading(true);
-    loadDevs();
+    if (city != null) {
+      loadDevs();
+    }
   }, [city]);
 
   async function loadDevs() {
 
     if (city) {
+      const cityForSearch = city.split(' ').join('-').replace(',', '')
+      console.log(cityForSearch);
       const response = await api.get('/search/users', {
         params: {
-          q: `location:${city}`,
+          q: `location:${cityForSearch}`,
         },
         headers: {
           Accept: 'application/vnd.github.mercy-preview+json'
@@ -48,7 +49,6 @@ export default DevsList = ({ navigation }) => {
 
       if (response.data.items.length === 0) {
         Alert.alert('Que vergonha, sua cidade não tem outros devs!!!');
-
       }
       setLoading(false);
     } else {
@@ -67,14 +67,18 @@ export default DevsList = ({ navigation }) => {
   }
 
   useEffect(() => {
-    Location.reverseGeocodeAsync(geoLocation).then(response => {
-      if (response[0].city !== null) {
-        setCity(response[0].city);
-        //console.log(response[0].city)
-        navigation.setParams({ city: response[0].city });
-      }
-
-    });
+    if(geoLocation != null){
+      Location.reverseGeocodeAsync(geoLocation).then(response => {
+        console.log('chegou')
+        if (response[0] && response[0].city !== null) {
+          setCity(response[0].city);
+          navigation.setParams({ city: response[0].city });
+        }else{
+          setCity(navigation.getParam('city'));
+        }
+  
+      });
+    }
   }, [geoLocation]);
 
   return (
