@@ -57,7 +57,7 @@ const _Login = ({ navigation }) => {
         const user = data
         AsyncStorage.setItem('user', JSON.stringify(user)).then(() => {
           navigation.setParams({ user: user })
-          navigation.navigate('DevsList', { user });
+          navigation.navigate('DevsList', { user, city: user.location });
         })
       })
       .catch((error) => {

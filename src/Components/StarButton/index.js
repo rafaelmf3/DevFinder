@@ -4,7 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 type StarButtonProps = {
     onPress: Function, // ADICIONAR A RECEPÇÃO DO STATUS ATUAL
-     size: Number,
+    size: Number,
     status: Boolean
 }
 
@@ -13,7 +13,7 @@ export default StarButton = (props: StarButtonProps) => {
     // const activeStar = require('./../../../assets/star2.png')
     // const disabledStar = require('./../../../assets/star.png')
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={() => onPress(!status)}>
       <View>
         {
           status

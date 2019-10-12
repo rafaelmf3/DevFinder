@@ -12,8 +12,6 @@ type ProfileProps = {
     onPressFavorite: Function
 }
 export default Profile = (props: ProfileProps) => {
-    const [favoriteStatus, setFavoriteStatus] = useState(false)
-
     const {
         name,
         username,
@@ -36,8 +34,8 @@ export default Profile = (props: ProfileProps) => {
 // Ao clicar na estrela vazia, deve-se incluir o login do usuário do array de Favorites
 // Ao clicar na estrela colorida, deve-se retirar o login do usuário do array de Favorites */}
                     <StarButton
-                        status={favoriteStatus}
-                        onPress={() => setFavoriteStatus(!favoriteStatus)}
+                        status={favorite}
+                        onPress={onPressFavorite}
                     />
                     <Image
                         style={Styles.imagePerfil}

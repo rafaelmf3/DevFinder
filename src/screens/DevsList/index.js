@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, FlatList, ActivityIndicator, Platform, Alert } from 'react-native'
+import { View, Text, FlatList, ActivityIndicator, Platform, Alert , AsyncStorage} from 'react-native'
 
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
@@ -69,7 +69,6 @@ export default DevsList = ({ navigation }) => {
   useEffect(() => {
     if(geoLocation != null){
       Location.reverseGeocodeAsync(geoLocation).then(response => {
-        console.log('chegou')
         if (response[0] && response[0].city !== null) {
           setCity(response[0].city);
           navigation.setParams({ city: response[0].city });
