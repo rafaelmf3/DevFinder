@@ -4,83 +4,122 @@ import Profile from '../../Components/Profile'
 import Repository from '../../Components/Repository'
 import api from '../../services/api'
 
-export default DevProfile = ({ navigation}) => {
-    const [repos, setRepos] = useState([])
-    const [loading, setLoading] = useState(false)
+export default DevProfile = ({ navigation }) => {
+  const [repos, setRepos] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [isFavorite, setIsFavorite] = useState(false)
 
-    // console.log('teste', navigation.state);
-    const user = navigation.getParam('dev')
-    // console.log(user);
-    const _getRepositories = () => {
-        setLoading(true)
-        api.get(`/users/${user.login}/repos`)
-            .then(({ data }) => {
-                const repos = data
-                setRepos(repos)
+  // console.log('teste', navigation.state);
+  const dev = navigation.getParam('dev')
+  const user = navigation.getParam('user')
+  // console.log(user);
+  const _getRepositories = () => {
+    setLoading(true)
+    api.get(`/users/${dev.login}/repos`)
+      .then(({ data }) => {
+        const repos = data
+        setRepos(repos)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }
+
+  useEffect(() => {
+    _getRepositories()
+    checkFavorite()
+  }, []);
+
+  function checkFavorite() {
+    AsyncStorage.getItem(`favorites:${user.login}`).then(favorites => {
+      if(favorites){
+        favorites = JSON.parse(favorites);
+        if (favorites.includes(dev.login))
+          setIsFavorite(true)
+      }
+    })
+  }
+
+  function storeFavorites(isAdd) {
+    if (isAdd) {
+      AsyncStorage.getItem(`favorites:${user.login}`)
+        .then(favorites => {
+          console.log(favorites)
+          if (favorites)
+            favorites = JSON.parse(favorites);
+          else
+            favorites = []
+          favorites.push(dev.login)
+          AsyncStorage.setItem(`favorites:${user.login}`, JSON.stringify(favorites)).then(() => {
+            setIsFavorite(true)
+          });
+        })
+    } else {
+      AsyncStorage.getItem(`favorites:${user.login}`)
+        .then(favorites => {
+          if (favorites) {
+            favorites = JSON.parse(favorites);
+            let newFavorites = favorites.filter(favorite => {
+              return favorite != dev.login
             })
-            .finally(() => {
-                setLoading(false)
-            })
+            AsyncStorage.setItem(`favorites:${user.login}`, JSON.stringify(newFavorites)).then(() => {
+              setIsFavorite(false)
+            });
+          } else {
+            AsyncStorage.setItem(`favorites:${user.login}`, JSON.stringify([]));
+          }
+        })
     }
 
-    useEffect(() => {
-        _getRepositories()
-    }, []);
+  }
 
-    function storeFavorites() {
-
-      var favorites = AsyncStorage.getItem('favorites');
-      console.log(favorites);
-      AsyncStorage.setItem('favorites', favorites += JSON.stringify(user.login));
-
-    }
-
-    const renderRepository = ({ item }) => {
-        return (
-            <Repository
-                description={item.description}
-                language={item.language}
-                qtyStars={item.stargazers_count}
-                title={item.name}
-            />
-        )
-    }
-
-    const renderProfile = () => {
-        return (
-            <Profile
-                image={user.avatar_url}
-                name={user.name}
-                followers={user.followers}
-                username={user.login}
-                email={user.email}
-                bio={user.bio}
-                onPressFavorite={() => storeFavorites}
-            />
-
-        )
-    }
-
+  const renderRepository = ({ item }) => {
     return (
-        <View style={{ backgroundColor: '#191970', flex: 1 }}>
-            <View>
-              {renderProfile()}
-              <FlatList
-                    data={repos}
-                    keyExtractor={item => item.node_id}
-                    // ListHeaderComponent={renderProfile}
-                    renderItem={renderRepository}
-                    //ListEmptyComponent={<Text>Não encontramos nenhum repositório!</Text>}
-                    refreshControl={
-                        <RefreshControl
-
-                            refreshing={loading}
-                            onRefresh={_getRepositories}
-                        />
-                    }
-                />
-
-            </View>
-        </View>
+      <Repository
+        description={item.description}
+        language={item.language}
+        qtyStars={item.stargazers_count}
+        title={item.name}
+      />
     )
+  }
+
+  const renderProfile = () => {
+    return (
+      <Profile
+        image={dev.avatar_url}
+        name={dev.name}
+        followers={dev.followers}
+        username={dev.login}
+        email={dev.email}
+        bio={dev.bio}
+        favorite={isFavorite}
+        onPressFavorite={storeFavorites}
+      />
+
+    )
+  }
+
+  return (
+    <View style={{ backgroundColor: '#191970', flex: 1 }}>
+      <View>
+        {renderProfile()}
+        <FlatList
+          data={repos}
+          keyExtractor={item => item.node_id}
+          // ListHeaderComponent={renderProfile}
+          renderItem={renderRepository}
+          //ListEmptyComponent={<Text>Não encontramos nenhum repositório!</Text>}
+          refreshControl={
+            <RefreshControl
+
+              refreshing={loading}
+              onRefresh={_getRepositories}
+            />
+          }
+        />
+
+      </View>
+    </View>
+  )
 }

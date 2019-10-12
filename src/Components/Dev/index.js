@@ -4,9 +4,6 @@ import { View, TouchableOpacity, Text } from 'react-native';
 
 function Dev({dev, navigation, user, city}) {
   function handleDevProfile() {
-    // const user = dev;
-    // console.log(user);
-    // navigation.getParam('user', user);
     navigation.navigate('DevProfile', { dev, user, city });
   }
 
