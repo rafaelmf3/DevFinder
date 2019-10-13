@@ -48,15 +48,11 @@ export default DevsList = ({ navigation }) => {
         Alert.alert('Não encontrou nenhum dev');
       }
       setDevs(response.data.items);
-<<<<<<< HEAD
-
-=======
       //console.log(response.data.items)
 
       if (response.data.items.length === 0) {
         Alert.alert('Que vergonha, sua cidade não tem outros devs!!!');
       }
->>>>>>> 292c442ebd96980a22d3cd1c3916b9e8e5b6d721
       setLoading(false);
     } else {
       setCity(navigation.getParam('city'));
@@ -82,7 +78,7 @@ export default DevsList = ({ navigation }) => {
         }else{
           setCity(navigation.getParam('city'));
         }
-  
+
       });
     }
   }, [geoLocation]);
