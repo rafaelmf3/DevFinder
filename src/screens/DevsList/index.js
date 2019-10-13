@@ -34,9 +34,11 @@ export default DevsList = ({ navigation }) => {
   async function loadDevs() {
 
     if (city) {
+      const cityForSearch = city.split(' ').join('-').replace(',', '')
+      console.log(cityForSearch);
       const response = await api.get('/search/users', {
         params: {
-          q: `location:${city}`,
+          q: `location:${cityForSearch}`,
         },
         headers: {
           Accept: 'application/vnd.github.mercy-preview+json'
@@ -87,6 +89,7 @@ export default DevsList = ({ navigation }) => {
             keyExtractor={item => String(item.login)}
             renderItem={({ item }) => (
               <Dev dev={item} user={navigation.getParam('user')} city={city} />
+
             )}
           />
 
