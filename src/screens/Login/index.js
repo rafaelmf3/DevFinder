@@ -34,9 +34,6 @@ const _Login = ({ navigation }) => {
     AsyncStorage.getItem('user').then(user => {
       if (user) {
         user = JSON.parse(user);
-        // console.log(user.location);
-        // setCity(user.location);
-
         navigation.navigate('DevsList', { user, city: user.location });
       }
     })

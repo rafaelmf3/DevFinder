@@ -9,10 +9,9 @@ export default DevProfile = ({ navigation }) => {
   const [loading, setLoading] = useState(false)
   const [isFavorite, setIsFavorite] = useState(false)
 
-  // console.log('teste', navigation.state);
   const dev = navigation.getParam('dev')
   const user = navigation.getParam('user')
-  // console.log(user);
+
   const _getRepositories = () => {
     setLoading(true)
     api.get(`/users/${dev.login}/repos`)
