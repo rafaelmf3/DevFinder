@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, FlatList, ActivityIndicator, Platform, Alert , AsyncStorage} from 'react-native'
+import { View, Text, FlatList, ActivityIndicator, Platform, Alert, AsyncStorage } from 'react-native'
 
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
@@ -8,12 +8,19 @@ import Constants from 'expo-constants';
 import api from '../../services/api';
 
 import Dev from '../../Components/Dev';
+import Search from '../../Components/Search';
+import { NavigationEvents } from 'react-navigation';
 
 export default DevsList = ({ navigation }) => {
   const [city, setCity] = useState();
   const [loading, setLoading] = useState(false);
   const [devs, setDevs] = useState([]);
   const [geoLocation, setGeoLocation] = useState();
+  const [lookingFavorites, setLookFavorites] = useState(false);
+  const [search, setSearch] = useState('');
+  const [favorites, setFavorites] = useState([])
+
+  const user = navigation.getParam('user')
 
   useEffect(() => {
     if (Platform.OS === 'android' && !Constants.isDevice) {
@@ -34,10 +41,9 @@ export default DevsList = ({ navigation }) => {
 
     if (city) {
       const cityForSearch = city.split(' ').join('-').replace(',', '')
-      console.log(cityForSearch);
       const response = await api.get('/search/users', {
         params: {
-          q: `location:${cityForSearch}`,
+          q: `${search} location:${cityForSearch}`,
         },
         headers: {
           Accept: 'application/vnd.github.mercy-preview+json'
@@ -67,33 +73,58 @@ export default DevsList = ({ navigation }) => {
   }
 
   useEffect(() => {
-    if(geoLocation != null){
+    if (geoLocation != null) {
       Location.reverseGeocodeAsync(geoLocation).then(response => {
         if (response[0] && response[0].city !== null) {
           setCity(response[0].city);
           navigation.setParams({ city: response[0].city });
-        }else{
+        } else {
           setCity(navigation.getParam('city'));
         }
-  
+
       });
     }
   }, [geoLocation]);
 
+
+  onSearch = () => {
+    setLoading(true)
+    loadDevs()
+  }
+
+  getFavorites = () => {
+    AsyncStorage.getItem(`favorites:${user.login}`).then(favoritesAsync => {
+      if(favoritesAsync)
+        setFavorites(favoritesAsync)
+    })
+  }
+
   return (
     <View style={{ backgroundColor: '#191970', flex: 1 }}>
-      {
-        loading
-          ? <ActivityIndicator size="large" color="white" />
-          : <FlatList
-            data={devs}
-            keyExtractor={item => String(item.login)}
-            renderItem={({ item }) => (
-              <Dev dev={item} user={navigation.getParam('user')} city={city} />
-            )}
-          />
+      <NavigationEvents onWillFocus={getFavorites}/>
+      <Search
+        favoriteSearchStatus={lookingFavorites}
+        onFavoriteSearch={(value) => { getFavorites(); setLookFavorites(value)}}
+        textValue={search}
+        onChangeText={setSearch}
+      />
+      <View style={{ flex: 1 }}>
+        {
+          loading
+            ? <ActivityIndicator size="large" color="white" />
+            : <FlatList
+              data={devs}
+              extraData={lookingFavorites}
+              keyExtractor={item => String(item.login)}
+              renderItem={({ item }) => {
+                if(!lookingFavorites || favorites.includes(item.login))//melhor desempenho na refatoração
+                  return <Dev dev={item} user={user} city={city} />
+              }
+              }
+            />
 
-      }
+        }
+      </View>
 
 
     </View>
