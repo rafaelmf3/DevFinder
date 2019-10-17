@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, FlatList, ActivityIndicator, Platform, Alert, AsyncStorage } from 'react-native'
+import {
+  View, Text, FlatList, ActivityIndicator, Platform, Alert,
+  StyleSheet, AsyncStorage, SafeAreaView
+} from 'react-native'
+import { Button } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
@@ -86,6 +91,11 @@ export default DevsList = ({ navigation }) => {
     }
   }, [geoLocation]);
 
+  _handleLogOut = () => {
+    AsyncStorage.removeItem('user');
+    navigation.navigate('Login')
+  }
+
 
   onSearch = () => {
     setLoading(true)
@@ -94,17 +104,19 @@ export default DevsList = ({ navigation }) => {
 
   getFavorites = () => {
     AsyncStorage.getItem(`favorites:${user.login}`).then(favoritesAsync => {
-      if(favoritesAsync)
+      if (favoritesAsync)
         setFavorites(favoritesAsync)
     })
   }
 
   return (
+
     <View style={{ backgroundColor: '#191970', flex: 1 }}>
-      <NavigationEvents onWillFocus={getFavorites}/>
+
+      <NavigationEvents onWillFocus={getFavorites} />
       <Search
         favoriteSearchStatus={lookingFavorites}
-        onFavoriteSearch={(value) => { getFavorites(); setLookFavorites(value)}}
+        onFavoriteSearch={(value) => { getFavorites(); setLookFavorites(value) }}
         textValue={search}
         onChangeText={setSearch}
       />
@@ -117,17 +129,34 @@ export default DevsList = ({ navigation }) => {
               extraData={lookingFavorites}
               keyExtractor={item => String(item.login)}
               renderItem={({ item }) => {
-                if(!lookingFavorites || favorites.includes(item.login))//melhor desempenho na refatoração
+                if (!lookingFavorites || favorites.includes(item.login))//melhor desempenho na refatoração
                   return <Dev dev={item} user={user} city={city} />
               }
               }
             />
 
         }
+
       </View>
-
-
+      <Button
+        icon={
+          <Icon
+            name="arrow-right"
+            size={10}
+            color="white"
+          />
+        }
+        style={Styles.btnLogout} title="Sair" type="clear"
+        onPress={() => _handleLogOut()}
+      />
     </View>
 
   )
 }
+const Styles = StyleSheet.create({
+  btnLogout: {
+    //width: 30
+  },
+})
+
+
