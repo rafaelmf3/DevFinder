@@ -63,3 +63,5 @@ typings/
 yarn.lock
 
 package-lock.json
+
+.expo/*
