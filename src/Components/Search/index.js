@@ -19,7 +19,7 @@ export default Search = (props: SearchProps) => {
         onChangeText,
     } = props
     return (
-        <View style={{ flexDirection: 'row', paddingHorizontal: 10 }}>
+        <View style={{ flexDirection: 'row', paddingHorizontal: 10, paddingBottom: 20 }}>
             <StarButton
                 status={favoriteSearchStatus}
                 onPress={onFavoriteSearch}

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import {
   View, Text, FlatList, ActivityIndicator, Platform, Alert,
-  StyleSheet, AsyncStorage, SafeAreaView, Button
-} from 'react-native'
-// import { Button } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
+  StyleSheet, AsyncStorage, SafeAreaView, Button, TouchableOpacity
+} from 'react-native';
+import { MaterialIcons } from "@expo/vector-icons"
 
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
@@ -137,25 +136,13 @@ export default DevsList = ({ navigation }) => {
         }
 
       </View>
-      <Button
-        icon={
-          <Icon
-            name="arrow-right"
-            size={10}
-            color="white"
-          />
-        }
-        style={Styles.btnLogout} title="Sair" type="clear"
-        onPress={() => _handleLogOut()}
-      />
+      <TouchableOpacity onPress={() => _handleLogOut()} style={{height: 70, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderTopWidth: 1, borderTopColor: '#fff', backgroundColor: '#333'}}>
+        <MaterialIcons name="arrow-back" size={32} color="white" ></MaterialIcons>
+        <Text style={{color: '#fff', fontSize: 20}}>Logout</Text>
+      </TouchableOpacity>
     </View>
 
   )
 }
-const Styles = StyleSheet.create({
-  btnLogout: {
-    //width: 30
-  },
-})
 
 
