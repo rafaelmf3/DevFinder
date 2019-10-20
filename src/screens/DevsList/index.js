@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import {
   View, Text, FlatList, ActivityIndicator, Platform, Alert,
-  StyleSheet, AsyncStorage, SafeAreaView
+  StyleSheet, AsyncStorage, SafeAreaView, Button
 } from 'react-native'
-import { Button } from 'react-native-elements';
+// import { Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import * as Location from 'expo-location';
