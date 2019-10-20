@@ -56,10 +56,9 @@ export default DevsList = ({ navigation }) => {
       });
 
       setDevs(response.data.items);
-      //console.log(response.data.items)
 
       if (response.data.items.length === 0) {
-        Alert.alert('Que vergonha, sua cidade não tem outros devs!!!');
+        Alert.alert('Não foram encontrados devs!!!');
       }
       setLoading(false);
     } else {
