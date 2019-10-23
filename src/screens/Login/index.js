@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import {
-  KeyboardAvoidingView,
   Platform,
-  View,
-  TextInput,
-  StyleSheet,
-  Image,
-  Text,
   AsyncStorage,
   ActivityIndicator,
   TouchableOpacity,
@@ -16,6 +10,8 @@ import {
 import buffer from 'buffer';
 
 import api from './../../services/api'
+
+import { Container, Form, Img, Input, Btn, BtnText } from './styles';
 
 const _Login = ({ navigation }) => {
   const [username, setUsername] = useState('');
@@ -34,9 +30,6 @@ const _Login = ({ navigation }) => {
     AsyncStorage.getItem('user').then(user => {
       if (user) {
         user = JSON.parse(user);
-        // console.log(user.location);
-        // setCity(user.location);
-
         navigation.navigate('DevsList', { user, city: user.location });
       }
     })
@@ -69,11 +62,10 @@ const _Login = ({ navigation }) => {
   }
 
   return (
-    <KeyboardAvoidingView enabled={Platform.OS === 'ios'} behavior="padding" style={Styles.container}>
-      <View style={Styles.form}>
-        <Image style={Styles.logo} resizeMode={'contain'} source={require('./../../../assets/logo.png')} />
-        <TextInput
-          style={Styles.textInput}
+    <Container enabled={Platform.OS === 'ios'} behavior="padding">
+      <Form>
+        <Img resizeMode={'contain'} source={require('./../../../assets/logo.png')} />
+        <Input
           placeholder="Enter GitHub email or username"
           keyboardType="email-address"
           autoCapitalize="none"
@@ -81,72 +73,37 @@ const _Login = ({ navigation }) => {
           value={username}
           onChangeText={setUsername}
         />
-        <TextInput
-          style={Styles.textInput}
+        <Input
           placeholder="Enter password"
           secureTextEntry={true}
           autoCapitalize="none"
           autoCorrect={false}
           value={password}
           onChangeText={setPassword}
+          returnKeyType="send"
+          onSubmitEditing={handleLogin}
         />
         <TouchableOpacity
           onPress={handleLogin}
           disabled={!canLogin}>
-          <View
-            style={[Styles.button, canLogin ? {} : { backgroundColor: '#35B' }]}
+          <Btn
+            style={[canLogin ? {} : { backgroundColor: '#35B' }]}
           >
             {
               loading ?
                 <ActivityIndicator />
                 :
-                <Text style={Styles.textButton}>Login</Text>
+                <BtnText>Login</BtnText>
             }
-          </View>
+          </Btn>
         </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+      </Form>
+    </Container>
   )
 }
 
 _Login.navigationOptions = {
   header: null
 }
-
-const Styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'stretch',
-    backgroundColor: '#191970'
-  },
-  form: {
-    paddingHorizontal: 30
-  },
-  logo: {
-    width: '100%',
-    height: 200
-  },
-  textInput: {
-    backgroundColor: 'white',
-    marginTop: 20,
-    borderRadius: 10,
-    height: 40,
-    paddingLeft: 10
-  },
-  button: {
-    backgroundColor: '#00BFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    marginTop: 20,
-    borderRadius: 10,
-    height: 40
-  },
-  textButton: {
-    color: 'white'
-  }
-})
-
 
 export default Login = _Login;

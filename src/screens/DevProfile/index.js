@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, FlatList, RefreshControl, Text, AsyncStorage } from 'react-native'
+import { View, FlatList, RefreshControl, AsyncStorage } from 'react-native'
 import Profile from '../../Components/Profile'
 import Repository from '../../Components/Repository'
 import api from '../../services/api'
@@ -9,10 +9,9 @@ export default DevProfile = ({ navigation }) => {
   const [loading, setLoading] = useState(false)
   const [isFavorite, setIsFavorite] = useState(false)
 
-  // console.log('teste', navigation.state);
   const dev = navigation.getParam('dev')
   const user = navigation.getParam('user')
-  // console.log(user);
+
   const _getRepositories = () => {
     setLoading(true)
     api.get(`/users/${dev.login}/repos`)
@@ -32,7 +31,7 @@ export default DevProfile = ({ navigation }) => {
 
   function checkFavorite() {
     AsyncStorage.getItem(`favorites:${user.login}`).then(favorites => {
-      if(favorites){
+      if (favorites) {
         favorites = JSON.parse(favorites);
         if (favorites.includes(dev.login))
           setIsFavorite(true)

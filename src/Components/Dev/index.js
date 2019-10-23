@@ -1,21 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { withNavigation } from 'react-navigation';
-import { View, TouchableOpacity, Text, Image } from 'react-native';
-import api from '../../services/api';
+import { TouchableOpacity } from 'react-native';
+import { Avatar, Container, Login, Name, Followers, Profile } from "./styles"
 
-function Dev({dev, navigation, user, city}) {
-  const [devs,setDevs] = useState([]);
+import api from "../../services/api";
 
-  // useEffect(() => {
-  //   devSearchInfo();
-  // }, []);
-
-  // async function devSearchInfo() {
-  //   const devInfo = await api.get(`/users/${dev.login}`);
-
-  //   setDevs(devInfo);
-
-  // }
+function Dev({ dev, navigation, user, city }) {
+  const [profile, setProfile] = useState({});
 
   function handleDevProfile() {
     navigation.navigate('DevProfile', { dev, user, city });
@@ -23,13 +14,25 @@ function Dev({dev, navigation, user, city}) {
   console.log(dev);
 
 
+  useEffect(() => {
+    api.get(`/users/${dev.login}`).then(
+      response => { setProfile(response.data); }
+    )
+  }, []);
+
   return (
-    <View>
-      <TouchableOpacity onPress={handleDevProfile} >
-        <Image source={{uri: dev.avatar_url}} style={{height: 50, width: 50, borderRadius: 4, marginLeft: 15}} />
-        <Text style={{fontSize: 20, margin: 20}}>@{dev.login}</Text>
-      </TouchableOpacity>
-    </View>
+    <TouchableOpacity onPress={handleDevProfile}>
+      <Container>
+
+        <Avatar source={{ uri: profile.avatar_url }} />
+        <Profile>
+          <Name>{profile.name}</Name>
+          <Login>{profile.login}</Login>
+          <Followers>Followers: {profile.followers}</Followers>
+
+        </Profile>
+      </Container>
+    </TouchableOpacity>
   );
 }
 
