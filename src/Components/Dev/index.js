@@ -9,7 +9,7 @@ function Dev({ dev, navigation, user, city }) {
   const [profile, setProfile] = useState({});
 
   function handleDevProfile() {
-    navigation.navigate('DevProfile', { dev, user, city });
+    navigation.navigate('DevProfile', { dev: {...dev, ...profile}, user, city });
   }
   console.log(dev);
 
