@@ -1,5 +1,6 @@
 import api from "./api";
 import buffer from 'buffer';
+import { AsyncStorage } from "react-native";
 
 
 export default UserService = {
@@ -13,5 +14,21 @@ export default UserService = {
         })
 
         return data
+    },
+    async saveUser(user){
+        if(user){
+            await AsyncStorage.setItem('user', JSON.stringify(user))
+            return user
+        }else{
+            throw new Error("Usuário inválido!")
+        }
+    },
+    async getLoggedUser(){
+        try{
+            const user = await AsyncStorage.getItem('user')
+            return JSON.parse(user);
+        }catch(error){
+            return null
+        }
     }
 }

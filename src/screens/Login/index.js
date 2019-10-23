@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import {
   Platform,
-  AsyncStorage,
   ActivityIndicator,
   TouchableOpacity,
   Alert
@@ -18,15 +17,12 @@ const _Login = ({ navigation }) => {
   const canLogin = username.length > 0 && !loading
 
   useEffect(() => {
-
     _checkLogin();
   }, []);
 
   _checkLogin = () => {
-
-    AsyncStorage.getItem('user').then(user => {
+    UserService.getLoggedUser().then(user => {
       if (user) {
-        user = JSON.parse(user);
         navigation.navigate('DevsList', { user, city: user.location });
       }
     })
@@ -37,8 +33,7 @@ const _Login = ({ navigation }) => {
 
     UserService.login(username, password)
       .then((user) => {
-        AsyncStorage.setItem('user', JSON.stringify(user)).then(() => {
-          navigation.setParams({ user: user })
+        UserService.saveUser(user).then(() => {
           navigation.navigate('DevsList', { user, city: user.location });
         })
       })
