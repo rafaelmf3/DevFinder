@@ -3,8 +3,7 @@
   "expoServerPort": null,
   "packagerPort": null,
   "packagerPid": null,
-  "expoServerNgrokUrl": "https://n3-kcd.anonymous.devfinder.exp.direct",
-  "packagerNgrokUrl": "https://packager.n3-kcd.anonymous.devfinder.exp.direct",
-  "ngrokPid": 47384,
-  "webpackServerPort": null
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null
 }

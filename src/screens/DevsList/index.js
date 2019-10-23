@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {
-  View, Text, FlatList, ActivityIndicator, Platform, Alert,
-  StyleSheet, AsyncStorage, SafeAreaView, Button, TouchableOpacity
+  FlatList, ActivityIndicator, Platform, Alert, AsyncStorage,
 } from 'react-native';
 import { MaterialIcons } from "@expo/vector-icons"
 
@@ -13,6 +12,7 @@ import api from '../../services/api';
 
 import Dev from '../../Components/Dev';
 import Search from '../../Components/Search';
+import { Container, DevList, Txt, Touchable } from './styles'
 import { NavigationEvents } from 'react-navigation';
 
 export default DevsList = ({ navigation }) => {
@@ -109,8 +109,7 @@ export default DevsList = ({ navigation }) => {
 
   return (
 
-    <View style={{ backgroundColor: '#191970', flex: 1 }}>
-
+    <Container>
       <NavigationEvents onWillFocus={getFavorites} />
       <Search
         favoriteSearchStatus={lookingFavorites}
@@ -118,7 +117,7 @@ export default DevsList = ({ navigation }) => {
         textValue={search}
         onChangeText={setSearch}
       />
-      <View style={{ flex: 1 }}>
+      <DevList>
         {
           loading
             ? <ActivityIndicator size="large" color="white" />
@@ -135,12 +134,12 @@ export default DevsList = ({ navigation }) => {
 
         }
 
-      </View>
-      <TouchableOpacity onPress={() => _handleLogOut()} style={{height: 70, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderTopWidth: 1, borderTopColor: '#fff', backgroundColor: '#333'}}>
+      </DevList>
+      <Touchable onPress={() => _handleLogOut()}>
         <MaterialIcons name="arrow-back" size={32} color="white" ></MaterialIcons>
-        <Text style={{color: '#fff', fontSize: 20}}>Logout</Text>
-      </TouchableOpacity>
-    </View>
+        <Txt>Logout</Txt>
+      </Touchable>
+    </Container>
 
   )
 }
