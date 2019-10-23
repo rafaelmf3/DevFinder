@@ -7,11 +7,8 @@ import {
   Alert
 } from 'react-native'
 
-import buffer from 'buffer';
-
-import api from './../../services/api'
-
 import { Container, Form, Img, Input, Btn, BtnText } from './styles';
+import UserService from '../../services/User.service';
 
 const _Login = ({ navigation }) => {
   const [username, setUsername] = useState('');
@@ -38,16 +35,8 @@ const _Login = ({ navigation }) => {
   const handleLogin = () => {
     setLoading(true)
 
-    let b = new buffer.Buffer(username + ':' + password);
-    let encondedAuth = b.toString('base64');
-    setLoading(true)
-    api.get('/user', {
-      headers: {
-        'Authorization': 'Basic ' + encondedAuth
-      }
-    })
-      .then(({ data }) => {
-        const user = data
+    UserService.login(username, password)
+      .then((user) => {
         AsyncStorage.setItem('user', JSON.stringify(user)).then(() => {
           navigation.setParams({ user: user })
           navigation.navigate('DevsList', { user, city: user.location });
