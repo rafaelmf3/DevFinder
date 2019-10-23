@@ -3,6 +3,7 @@ import { View, FlatList, RefreshControl, AsyncStorage } from 'react-native'
 import Profile from '../../Components/Profile'
 import Repository from '../../Components/Repository'
 import api from '../../services/api'
+import DevService from '../../services/Dev.service'
 
 export default DevProfile = ({ navigation }) => {
   const [repos, setRepos] = useState([])
@@ -14,11 +15,8 @@ export default DevProfile = ({ navigation }) => {
 
   const _getRepositories = () => {
     setLoading(true)
-    api.get(`/users/${dev.login}/repos`)
-      .then(({ data }) => {
-        const repos = data
-        setRepos(repos)
-      })
+    DevService.getDevRepos(dev.login)
+      .then(setRepos)
       .finally(() => {
         setLoading(false)
       })
