@@ -4,6 +4,7 @@ import Profile from '../../Components/Profile'
 import Repository from '../../Components/Repository'
 import api from '../../services/api'
 import DevService from '../../services/Dev.service'
+import FavoriteService from '../../services/Favorite.service'
 
 export default DevProfile = ({ navigation }) => {
   const [repos, setRepos] = useState([])
@@ -28,44 +29,17 @@ export default DevProfile = ({ navigation }) => {
   }, []);
 
   function checkFavorite() {
-    AsyncStorage.getItem(`favorites:${user.login}`).then(favorites => {
-      if (favorites) {
-        favorites = JSON.parse(favorites);
-        if (favorites.includes(dev.login))
-          setIsFavorite(true)
-      }
-    })
+    FavoriteService.checkFavorite(user.login, dev.login)
+      .then(isFavored => setIsFavorite(isFavored))
   }
 
   function storeFavorites(isAdd) {
     if (isAdd) {
-      AsyncStorage.getItem(`favorites:${user.login}`)
-        .then(favorites => {
-          console.log(favorites)
-          if (favorites)
-            favorites = JSON.parse(favorites);
-          else
-            favorites = []
-          favorites.push(dev.login)
-          AsyncStorage.setItem(`favorites:${user.login}`, JSON.stringify(favorites)).then(() => {
-            setIsFavorite(true)
-          });
-        })
+      FavoriteService.addFavorite(user.login, dev.login)
+        .then((worked) => { if(worked) setIsFavorite(true)})
     } else {
-      AsyncStorage.getItem(`favorites:${user.login}`)
-        .then(favorites => {
-          if (favorites) {
-            favorites = JSON.parse(favorites);
-            let newFavorites = favorites.filter(favorite => {
-              return favorite != dev.login
-            })
-            AsyncStorage.setItem(`favorites:${user.login}`, JSON.stringify(newFavorites)).then(() => {
-              setIsFavorite(false)
-            });
-          } else {
-            AsyncStorage.setItem(`favorites:${user.login}`, JSON.stringify([]));
-          }
-        })
+      FavoriteService.removeFavorite(user.login, dev.login)
+        .then((worked) => { if(worked) setIsFavorite(false)})
     }
 
   }
