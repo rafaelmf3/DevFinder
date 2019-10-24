@@ -11,6 +11,9 @@ export default FavoriteService = {
     }
     return false
   },
+  async getFavorites(LoggedUserLogin) {
+    return await AsyncStorage.getItem(`favorites:${LoggedUserLogin}`)
+  },
   async addFavorite(LoggedUserLogin, devToCheck) {
     try {
       let favorites = await AsyncStorage.getItem(`favorites:${LoggedUserLogin}`)
