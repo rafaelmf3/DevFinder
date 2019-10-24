@@ -3,17 +3,14 @@ import {
   FlatList, ActivityIndicator, Platform, Alert, AsyncStorage,
 } from 'react-native';
 import { MaterialIcons } from "@expo/vector-icons"
-
-import * as Location from 'expo-location';
-import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
-
-import api from '../../services/api';
-
 import Dev from '../../Components/Dev';
 import Search from '../../Components/Search';
 import { Container, DevList, Txt, Touchable } from './styles'
 import { NavigationEvents } from 'react-navigation';
+import DevService from '../../services/Dev.service';
+import LocationService from '../../services/Location.service';
+import FavoriteService from '../../services/Favorite.service';
 
 export default DevsList = ({ navigation }) => {
   const [city, setCity] = useState();
@@ -44,22 +41,14 @@ export default DevsList = ({ navigation }) => {
   async function loadDevs() {
 
     if (city) {
-      const cityForSearch = city.split(' ').join('-').replace(',', '')
-      const response = await api.get('/search/users', {
-        params: {
-          q: `${search} location:${cityForSearch}`,
-        },
-        // headers: {
-        //   Accept: 'application/vnd.github.mercy-preview+json'
-        // }
-      });
+      const devs = await DevService.getDevsWithFilter(search, city)
 
-      if (response.data.items == []) {
+      if (devs == []) {
         Alert.alert('Não encontrou nenhum dev');
       }
-      setDevs(response.data.items);
+      setDevs(devs);
 
-      if (response.data.items.length === 0) {
+      if (devs.length === 0) {
         Alert.alert('Não foram encontrados devs!!!');
       }
       setLoading(false);
@@ -69,26 +58,20 @@ export default DevsList = ({ navigation }) => {
   }
 
   _getLocationAsync = async () => {
-    let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status !== 'granted') {
-      Alert.alert("Permission to access location was denied");
-    }
-
-    let { coords: { latitude, longitude } } = await Location.getCurrentPositionAsync({});
-    setGeoLocation({ latitude, longitude });
+    let coords = await LocationService.getGeoLocation()
+    setGeoLocation(coords);
   }
 
   useEffect(() => {
     if (geoLocation != null) {
-      Location.reverseGeocodeAsync(geoLocation).then(response => {
-        if (response[0] && response[0].city !== null) {
+      LocationService.getCityWithCoords(geoLocation).then(city => {
+        if(city){
           setCity(response[0].city);
           navigation.setParams({ city: response[0].city });
-        } else {
+        }else{
           setCity(navigation.getParam('city'));
         }
-
-      });
+      })
     }
   }, [geoLocation]);
 
@@ -104,7 +87,7 @@ export default DevsList = ({ navigation }) => {
   }
 
   getFavorites = () => {
-    AsyncStorage.getItem(`favorites:${user.login}`).then(favoritesAsync => {
+    FavoriteService.getFavorites(user.login).then(favoritesAsync => {
       if (favoritesAsync)
         setFavorites(favoritesAsync)
     })

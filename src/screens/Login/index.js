@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import {
   Platform,
-  AsyncStorage,
   ActivityIndicator,
   TouchableOpacity,
   Alert
 } from 'react-native'
 
-import buffer from 'buffer';
-
-import api from './../../services/api'
-
 import { Container, Form, Img, Input, Btn, BtnText } from './styles';
+import UserService from '../../services/User.service';
 
 const _Login = ({ navigation }) => {
   const [username, setUsername] = useState('');
@@ -21,15 +17,12 @@ const _Login = ({ navigation }) => {
   const canLogin = username.length > 0 && !loading
 
   useEffect(() => {
-
     _checkLogin();
   }, []);
 
   _checkLogin = () => {
-
-    AsyncStorage.getItem('user').then(user => {
+    UserService.getLoggedUser().then(user => {
       if (user) {
-        user = JSON.parse(user);
         navigation.navigate('DevsList', { user, city: user.location });
       }
     })
@@ -38,18 +31,9 @@ const _Login = ({ navigation }) => {
   const handleLogin = () => {
     setLoading(true)
 
-    let b = new buffer.Buffer(username + ':' + password);
-    let encondedAuth = b.toString('base64');
-    setLoading(true)
-    api.get('/user', {
-      headers: {
-        'Authorization': 'Basic ' + encondedAuth
-      }
-    })
-      .then(({ data }) => {
-        const user = data
-        AsyncStorage.setItem('user', JSON.stringify(user)).then(() => {
-          navigation.setParams({ user: user })
+    UserService.login(username, password)
+      .then((user) => {
+        UserService.saveUser(user).then(() => {
           navigation.navigate('DevsList', { user, city: user.location });
         })
       })

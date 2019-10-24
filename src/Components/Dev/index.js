@@ -3,21 +3,18 @@ import { withNavigation } from 'react-navigation';
 import { TouchableOpacity } from 'react-native';
 import { Avatar, Container, Login, Name, Followers, Profile } from "./styles"
 
-import api from "../../services/api";
+import DevService from '../../services/Dev.service';
 
 function Dev({ dev, navigation, user, city }) {
   const [profile, setProfile] = useState({});
 
   function handleDevProfile() {
-    navigation.navigate('DevProfile', { dev, user, city });
+    navigation.navigate('DevProfile', { dev: {...dev, ...profile}, user, city });
   }
-  console.log(dev);
-
 
   useEffect(() => {
-    api.get(`/users/${dev.login}`).then(
-      response => { setProfile(response.data); }
-    )
+    DevService.getDev(dev.login)
+      .then( profile => { setProfile(profile); })
   }, []);
 
   return (
