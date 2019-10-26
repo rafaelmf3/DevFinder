@@ -15,15 +15,22 @@ import FavoriteService from '../../services/Favorite.service';
 export default DevsList = ({ navigation }) => {
   const [city, setCity] = useState();
   const [loading, setLoading] = useState(false);
-  const [devs, setDevs] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
   const [geoLocation, setGeoLocation] = useState();
   const [lookingFavorites, setLookFavorites] = useState(false);
   const [search, setSearch] = useState('');
-  const [favorites, setFavorites] = useState([])
+  const [favorites, setFavorites] = useState([]);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [feed, setFeed] = useState([]);
+  const perPage = 10;
 
   const user = navigation.getParam('user')
 
   useEffect(() => {
+    if (loading) return;
+    setLoading(true);
+
     if (Platform.OS === 'android' && !Constants.isDevice) {
       Alert.alert('Oops, this will not work on Sketch in an Android emulator. Try it on your device!');
     } else {
@@ -32,29 +39,41 @@ export default DevsList = ({ navigation }) => {
   }, []);
 
   useEffect(() => {
-    setLoading(true);
     if (city != null) {
       loadDevs();
     }
   }, [city]);
 
-  async function loadDevs() {
+  async function loadDevs(pageNumber = page, shouldRefresh = false) {
+    if (pageNumber === total) return;
+
 
     if (city) {
-      const devs = await DevService.getDevsWithFilter(search, city)
+      const response = await DevService.getDevsWithFilter(search, city, page, perPage)
 
-      if (devs == []) {
+      if (response.total_count === 0) {
         Alert.alert('Não encontrou nenhum dev');
       }
-      setDevs(devs);
+      const totalItens = await response.total_count;
+      const data = await response.items;
 
-      if (devs.length === 0) {
-        Alert.alert('Não foram encontrados devs!!!');
-      }
       setLoading(false);
+      //setDevs(response.items);
+      setTotal(Math.floor(totalItens / 10));
+      setPage(pageNumber + 1);
+
+      setFeed(shouldRefresh ? data : [...feed, ...data]);
     } else {
       setCity(navigation.getParam('city'));
     }
+  }
+
+  async function refreshList() {
+    setRefreshing(true);
+
+    await loadDevs(1, true);
+
+    setRefreshing(false);
   }
 
   _getLocationAsync = async () => {
@@ -66,8 +85,8 @@ export default DevsList = ({ navigation }) => {
     if (geoLocation != null) {
       LocationService.getCityWithCoords(geoLocation).then(city => {
         if(city){
-          setCity(response[0].city);
-          navigation.setParams({ city: response[0].city });
+          setCity(city);
+          navigation.setParams({ city });
         }else{
           setCity(navigation.getParam('city'));
         }
@@ -108,9 +127,14 @@ export default DevsList = ({ navigation }) => {
           loading
             ? <ActivityIndicator size="large" color="white" />
             : <FlatList
-              data={devs}
+              data={feed}
               extraData={lookingFavorites}
               keyExtractor={item => String(item.login)}
+              onRefresh={refreshList}
+              refreshing={refreshing}
+              showsVerticalScrollIndicator={false}
+              onEndReachedThreshold={0.1}
+              onEndReached={() => loadDevs()}
               renderItem={({ item }) => {
                 if (!lookingFavorites || favorites.includes(item.login))//melhor desempenho na refatoração
                   return <Dev dev={item} user={user} city={city} />
