@@ -10,12 +10,11 @@ export default DevService = {
     return data
   },
   async getDevsWithFilter(search, location, page, perPage) {
-    const cleanLocation = location.split(' ').join('-').replace(',', '')
 
     if (search !== '' && location !== '' ) {
       const { data } = await api.get('/search/users', {
         params: {
-          q: `${search} location:${cleanLocation}`,
+          q:`${search} location:"${location}"`,
           page,
           per_page: perPage,
         },
@@ -27,7 +26,7 @@ export default DevService = {
       const { data } = await api.get('/search/users', {
         params: {
           //location: cleanLocation,
-          q: `location:${cleanLocation}`,
+          q: `location:"${location}"`,
           page,
           per_page: perPage,
         },

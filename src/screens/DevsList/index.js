@@ -49,14 +49,12 @@ export default DevsList = ({ navigation }) => {
 
 
     if (city) {
-      const response = await DevService.getDevsWithFilter(search, city, page, perPage)
-
+      const response = await DevService.getDevsWithFilter(search, city, pageNumber, perPage)
       if (response.total_count === 0) {
         Alert.alert('Não encontrou nenhum dev');
       }
-      const totalItens = await response.total_count;
-      const data = await response.items;
-
+      const totalItens = response.total_count;
+      const data = response.items;
       setLoading(false);
       //setDevs(response.items);
       setTotal(Math.floor(totalItens / 10));
@@ -100,9 +98,13 @@ export default DevsList = ({ navigation }) => {
   }
 
 
-  onSearch = () => {
+  onSearch = async () => {
     setLoading(true)
-    loadDevs()
+    setRefreshing(true);
+    
+    await loadDevs(1, true)
+    
+    setRefreshing(false);
   }
 
   getFavorites = () => {
